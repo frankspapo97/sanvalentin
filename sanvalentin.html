@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>💘 Xiomara, ¿mi San Valentín?</title>
+  <style>
+    :root{
+      --card-bg: rgba(255,255,255,.14);
+      --card-border: rgba(255,255,255,.24);
+      --text: #fff;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --accent: #ff4d6d;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body{
+      overflow:hidden;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 20%, rgba(255,77,109,.45), transparent 55%),
+        radial-gradient(900px 600px at 80% 35%, rgba(255,179,193,.35), transparent 60%),
+        radial-gradient(900px 650px at 50% 90%, rgba(255,77,109,.25), transparent 60%),
+        linear-gradient(135deg, #2b0a1f, #140314);
+    }
+
+    /* Fondo con imagen opcional */
+    .bg-image{
+      position:fixed; inset:0;
+      background-image: var(--bg-url, none);
+      background-size: cover;
+      background-position: center;
+      filter: brightness(.75);
+      opacity: .55;
+      pointer-events:none;
+      transform: scale(1.03);
+    }
+
+    /* Corazones flotando */
+    .hearts{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
+    .heart{
+      position:absolute;
+      width:18px; height:18px;
+      transform: rotate(45deg);
+      opacity:0;
+      animation: floatUp linear infinite;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,.25));
+      background: rgba(255,77,109,.95);
+    }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:18px; height:18px;
+      background: rgba(255,77,109,.95);
+      border-radius: 50%;
+    }
+    .heart::before{ left:-9px; top:0; }
+    .heart::after{ left:0; top:-9px; }
+    @keyframes floatUp{
+      0%{ transform: translateY(20px) rotate(45deg) scale(.8); opacity:0; }
+      10%{ opacity:.85; }
+      100%{ transform: translateY(-110vh) rotate(45deg) scale(1.2); opacity:0; }
+    }
+
+    /* Layout principal responsive */
+    .wrap{
+      position:relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding: clamp(14px, 3vw, 28px);
+    }
+
+    .card{
+      width: min(920px, 96vw);
+      max-height: calc(100vh - 24px);
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: clamp(16px, 3.2vw, 30px);
+      text-align:center;
+      position:relative;
+    }
+
+    /* En móvil: todo apilado; en desktop: fotos a los lados */
+    .top{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: clamp(10px, 2vw, 18px);
+      align-items:center;
+      justify-items:center;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 760px){
+      .top{
+        grid-template-columns: auto 1fr auto;
+        justify-items: stretch;
+        align-items:center;
+      }
+    }
+
+    .photos{
+      display:flex;
+      gap: 12px;
+      justify-content:center;
+      flex-wrap: wrap;
+    }
+
+    @media (min-width: 760px){
+      .photos{
+        flex-direction: column;
+        gap: 14px;
+        justify-content:flex-start;
+      }
+    }
+
+    .photo{
+      width: clamp(96px, 22vw, 128px);
+      height: clamp(96px, 22vw, 128px);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+      box-shadow: 0 18px 40px rgba(0,0,0,.25);
+      display:grid;
+      place-items:center;
+      position:relative;
+    }
+    .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .photo .placeholder{
+      font-size: 12px;
+      opacity:.9;
+      padding:10px;
+      line-height:1.2;
+    }
+
+    .center{
+      min-width: 0;
+    }
+
+    h1{
+      margin: 0;
+      font-size: clamp(24px, 4.3vw, 42px);
+      letter-spacing:.2px;
+      text-shadow: 0 10px 24px rgba(0,0,0,.28);
+    }
+
+    .to{
+      margin: 8px auto 10px;
+      font-weight: 750;
+      opacity: .96;
+      font-size: clamp(14px, 2.2vw, 18px);
+    }
+
+    .sub{
+      margin: 0 auto 10px;
+      max-width: 62ch;
+      font-size: clamp(14px, 2.3vw, 18px);
+      opacity:.95;
+      line-height:1.5;
+    }
+
+    .question{
+      margin: 14px 0 10px;
+      font-size: clamp(19px, 3.3vw, 32px);
+      font-weight: 900;
+    }
+
+    /* Zona de botones: más baja en móvil */
+    .btn-zone{
+      position:relative;
+      width: min(640px, 92vw);
+      height: clamp(135px, 20vw, 170px);
+      margin: 14px auto 6px;
+      border-radius: 18px;
+      border: 1px dashed rgba(255,255,255,.18);
+      background: rgba(0,0,0,.10);
+      overflow:hidden;
+    }
+
+    .btn{
+      border:none;
+      border-radius: 999px;
+      padding: 14px 20px;
+      font-size: clamp(15px, 2.6vw, 18px);
+      font-weight: 900;
+      cursor:pointer;
+      transition: transform .15s ease, filter .15s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+    .btn:active{ transform: scale(.98); }
+
+    .btn-yes{
+      background: linear-gradient(135deg, var(--accent), #ff2e55);
+      color:#fff;
+      box-shadow: 0 14px 26px rgba(255,77,109,.25);
+      position:absolute;
+      left: 50%;
+      top: 58%;
+      transform: translate(-110%, -50%);
+    }
+    .btn-no{
+      background: rgba(255,255,255,.92);
+      color:#3b0a1f;
+      box-shadow: 0 14px 26px rgba(0,0,0,.18);
+      position:absolute;
+      left: 50%;
+      top: 58%;
+      transform: translate(10%, -50%);
+    }
+
+    /* Música: botones apilables */
+    .musicbar{
+      margin: 10px auto 0;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      opacity:.98;
+    }
+    .musicbtn{
+      background: rgba(255,255,255,.92);
+      color:#3b0a1f;
+      padding:10px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: clamp(12px, 2.4vw, 14px);
+    }
+    .musicnote{
+      font-size: 12px;
+      opacity:.85;
+      margin-top: 6px;
+    }
+
+    .hint{ opacity:.9; font-size: 13px; margin-top: 10px; }
+
+    .signature{
+      margin-top: 14px;
+      font-size: clamp(13px, 2.2vw, 15px);
+      opacity:.92;
+      font-weight: 750;
+    }
+
+    .settings{
+      margin-top: 10px;
+      opacity:.78;
+      font-size: 12px;
+    }
+    .settings code{
+      background: rgba(0,0,0,.25);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+
+    /* Overlay responsive */
+    .overlay{
+      position:fixed; inset:0;
+      display:none;
+      place-items:center;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+      padding: 18px;
+    }
+    .overlay.show{ display:grid; }
+
+    .celebrate{
+      width:min(820px, 96vw);
+      max-height: 86vh;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      padding: clamp(16px, 3.5vw, 28px);
+      text-align:center;
+      position:relative;
+    }
+    .celebrate h2{
+      margin: 0 0 8px;
+      font-size: clamp(24px, 4.5vw, 46px);
+    }
+    .celebrate p{
+      margin: 0 auto 16px;
+      max-width: 65ch;
+      font-size: clamp(14px, 2.4vw, 18px);
+      opacity:.95;
+      line-height:1.55;
+    }
+    .close{
+      margin-top: 8px;
+      background: rgba(255,255,255,.92);
+      color:#3b0a1f;
+    }
+
+    canvas#confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 60;
+    }
+
+    /* Evita que se vea feo en pantallas muy pequeñas */
+    @media (max-width: 360px){
+      .btn{ padding: 12px 16px; }
+      .photo{ border-radius: 18px; }
+      .card{ border-radius: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-image" id="bgImage"></div>
+  <div class="hearts" id="hearts"></div>
+  <canvas id="confetti"></canvas>
+
+  <!-- Audio local -->
+  <audio id="song" preload="auto">
+    <source src="cancion.mp3" type="audio/mpeg">
+  </audio>
+
+  <main class="wrap">
+    <section class="card" aria-label="Tarjeta romántica">
+      <div class="top">
+        <div class="photos">
+          <div class="photo" title="Foto 1">
+            <img id="img1" alt="Foto romántica 1" style="display:none;" />
+            <div class="placeholder" id="ph1">📷<br/>Pon aquí <b>foto1.jpg</b></div>
+          </div>
+          <div class="photo" title="Foto 2">
+            <img id="img2" alt="Foto romántica 2" style="display:none;" />
+            <div class="placeholder" id="ph2">📷<br/>Pon aquí <b>foto2.jpg</b></div>
+          </div>
+        </div>
+
+        <div class="center">
+          <h1>💖 Mi princesa</h1>
+          <div class="to">Para: <b>Xiomara</b> ✨</div>
+          <div class="sub">
+            Mi princesa hermosa… desde que llegaste a mi vida todo es más bonito.
+            Hoy quiero hacerte una pregunta muy especial 💘
+          </div>
+
+          <div class="musicbar">
+            <button class="musicbtn" id="btnPlay">▶ Reproducir canción</button>
+            <button class="musicbtn" id="btnPause">⏸ Pausar</button>
+          </div>
+          <div class="musicnote">
+            Si no suena, incluye <code>cancion.mp3</code> en la misma carpeta.
+          </div>
+        </div>
+
+        <div class="photos" aria-hidden="true" style="opacity:0; pointer-events:none; height:0; overflow:hidden;">
+          <!-- Espaciador para balance visual en desktop (no visible) -->
+        </div>
+      </div>
+
+      <div class="question">¿Quieres tú ser mi San Valentín? 💘</div>
+
+      <div class="btn-zone" id="zone">
+        <button class="btn btn-yes" id="btnYes">Sí 💞</button>
+        <button class="btn btn-no" id="btnNo">No 🙈</button>
+      </div>
+
+      <div class="hint">Tip: si intentas decir que no… ese botón es tímido 😄</div>
+      <div class="signature">— Francisco Ramos</div>
+
+      <div class="settings">
+        Opcional: coloca <code>bg.jpg</code>, <code>foto1.jpg</code>, <code>foto2.jpg</code> y <code>cancion.mp3</code> en la misma carpeta.
+      </div>
+    </section>
+  </main>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Celebración">
+    <div class="celebrate">
+      <h2>¡SÍÍÍ, MI PRINCESA! 🥰🎉</h2>
+      <p>
+        Xiomara… me hiciste el día ❤️<br/>
+        Gracias por ser mi persona favorita. Prometo cuidarte, hacerte reír
+        y celebrar contigo todos los momentos bonitos ✨
+      </p>
+      <button class="btn close" id="btnClose">Cerrar ✨</button>
+    </div>
+  </div>
+
+  <script>
+    // ==========================
+    // CONFIG: nombres de archivos
+    // ==========================
+    const IMAGES = { background: "bg.jpg", photo1: "foto1.jpg", photo2: "foto2.jpg" };
+
+    function tryLoadImage(imgEl, placeholderEl, filename){
+      imgEl.src = filename;
+      imgEl.onload = () => { imgEl.style.display = "block"; placeholderEl.style.display = "none"; };
+      imgEl.onerror = () => {};
+    }
+
+    const bg = document.getElementById("bgImage");
+    const testBg = new Image();
+    testBg.src = IMAGES.background;
+    testBg.onload = () => bg.style.setProperty("--bg-url", `url('${IMAGES.background}')`);
+
+    tryLoadImage(document.getElementById("img1"), document.getElementById("ph1"), IMAGES.photo1);
+    tryLoadImage(document.getElementById("img2"), document.getElementById("ph2"), IMAGES.photo2);
+
+    // ==========================
+    // Corazones flotantes
+    // ==========================
+    const hearts = document.getElementById("hearts");
+    const HEARTS_COUNT = 22;
+
+    function spawnHeart(){
+      const h = document.createElement("div");
+      h.className = "heart";
+      const left = Math.random() * 100;
+      const duration = 6 + Math.random() * 7;
+      const delay = Math.random() * 3;
+      const size = 10 + Math.random() * 18;
+
+      h.style.left = left + "vw";
+      h.style.bottom = (-10 - Math.random()*30) + "px";
+      h.style.animationDuration = duration + "s";
+      h.style.animationDelay = delay + "s";
+      h.style.width = size + "px";
+      h.style.height = size + "px";
+
+      hearts.appendChild(h);
+      setTimeout(() => h.remove(), (duration + delay) * 1000);
+    }
+    for(let i=0;i<HEARTS_COUNT;i++) setTimeout(spawnHeart, i * 250);
+    setInterval(spawnHeart, 650);
+
+    // ==========================
+    // Botón "No" escurridizo (responsive-safe)
+    // ==========================
+    const zone = document.getElementById("zone");
+    const btnNo = document.getElementById("btnNo");
+    const btnYes = document.getElementById("btnYes");
+
+    function moveNoButton(){
+      const zoneRect = zone.getBoundingClientRect();
+      const btnRect = btnNo.getBoundingClientRect();
+      const padding = 10;
+
+      const maxX = Math.max(padding, zoneRect.width - btnRect.width - padding);
+      const maxY = Math.max(padding, zoneRect.height - btnRect.height - padding);
+
+      const x = padding + Math.random() * (maxX - padding);
+      const y = padding + Math.random() * (maxY - padding);
+
+      btnNo.style.left = x + "px";
+      btnNo.style.top = y + "px";
+      btnNo.style.transform = "translate(0,0)";
+    }
+
+    btnNo.addEventListener("mouseenter", moveNoButton);
+    btnNo.addEventListener("mousedown", moveNoButton);
+    btnNo.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); }, {passive:false});
+
+    zone.addEventListener("mousemove", (e) => {
+      const r = btnNo.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width/2);
+      const dy = e.clientY - (r.top + r.height/2);
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 90) moveNoButton();
+    });
+
+    // Reubicar cuando cambie tamaño (rotación móvil)
+    window.addEventListener("resize", () => setTimeout(moveNoButton, 50));
+    moveNoButton();
+
+    // ==========================
+    // Música (se activa con interacción)
+    // ==========================
+    const song = document.getElementById("song");
+    const btnPlay = document.getElementById("btnPlay");
+    const btnPause = document.getElementById("btnPause");
+
+    async function safePlay(){
+      try{ await song.play(); } catch(e) {}
+    }
+    btnPlay.addEventListener("click", safePlay);
+    btnPause.addEventListener("click", () => song.pause());
+    window.addEventListener("pointerdown", () => { if(song.paused) safePlay(); }, { once:true });
+
+    // ==========================
+    // Celebración + confetti rojo
+    // ==========================
+    const overlay = document.getElementById("overlay");
+    const btnClose = document.getElementById("btnClose");
+
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let W, H;
+    function resizeCanvas(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+    addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    let confetti = [];
+    let running = false;
+    const REDS = ["#ff0b2f","#ff2e55","#ff4d6d","#ff6b81","#ff8fa3"];
+    const rand = (a,b)=>Math.random()*(b-a)+a;
+
+    function drawHeart(x,y,s,rot,color){
+      ctx.save();
+      ctx.translate(x,y); ctx.rotate(rot);
+      ctx.scale(s/18, s/18);
+      ctx.beginPath();
+      ctx.moveTo(0, 3);
+      ctx.bezierCurveTo(0, -6, -10, -6, -10, 2);
+      ctx.bezierCurveTo(-10, 10, 0, 14, 0, 18);
+      ctx.bezierCurveTo(0, 14, 10, 10, 10, 2);
+      ctx.bezierCurveTo(10, -6, 0, -6, 0, 3);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function burst(){
+      confetti = [];
+      const count = 240;
+      for(let i=0;i<count;i++){
+        confetti.push({
+          x: rand(W*0.08, W*0.92),
+          y: rand(-H*0.25, -20),
+          vx: rand(-2.2, 2.2),
+          vy: rand(2.5, 6.8),
+          size: rand(6, 12),
+          rot: rand(0, Math.PI*2),
+          vr: rand(-0.18, 0.18),
+          color: REDS[(Math.random()*REDS.length)|0],
+          shape: Math.random() < 0.25 ? "heart" : "rect",
+          life: rand(150, 240)
+        });
+      }
+      running = true;
+      requestAnimationFrame(tick);
+    }
+
+    function tick(){
+      if(!running) return;
+      ctx.clearRect(0,0,W,H);
+
+      for(const p of confetti){
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        p.vy += 0.03; p.life -= 1;
+
+        if(p.x < -20) p.x = W + 20;
+        if(p.x > W + 20) p.x = -20;
+
+        if(p.shape === "rect"){
+          ctx.save();
+          ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.7);
+          ctx.restore();
+        }else{
+          drawHeart(p.x,p.y,p.size+4,p.rot,p.color);
+        }
+      }
+
+      confetti = confetti.filter(p => p.life > 0 && p.y < H + 60);
+      if(confetti.length) requestAnimationFrame(tick);
+      else { running = false; ctx.clearRect(0,0,W,H); }
+    }
+
+    btnYes.addEventListener("click", async () => {
+      overlay.classList.add("show");
+      burst();
+      song.volume = 0.9;
+      if(song.paused) await safePlay();
+    });
+
+    btnClose.addEventListener("click", () => overlay.classList.remove("show"));
+    addEventListener("keydown", (e)=>{ if(e.key==="Escape") overlay.classList.remove("show"); });
+  </script>
+</body>
+</html>
